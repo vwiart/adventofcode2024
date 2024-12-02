@@ -16,7 +16,7 @@ fn read_file(left: &mut Vec<i32>, right: &mut Vec<i32>) -> Result<(), String> {
 
 fn process(left: &mut Vec<i32>, right: &mut Vec<i32>) -> Result<i32, String> {
     if left.len() != right.len() {
-        return Err("The arrays are not equal".into());
+        return Err("left and right have different length".into());
     }
     left.sort();
     right.sort();
@@ -33,6 +33,16 @@ mod tests {
         let mut left: Vec<i32> = vec![3, 4, 2, 1, 3, 3];
         let mut right: Vec<i32> = vec![4, 3, 5, 3, 9, 3];
         assert_eq!(super::process(&mut left, &mut right).unwrap(), 11);
+    }
+
+    #[test]
+    fn test_not_same_length() {
+        let mut left: Vec<i32> = vec![1, 2, 3];
+        let mut right: Vec<i32> = vec![4, 5];
+        assert_eq!(
+            super::process(&mut left, &mut right).unwrap_err(),
+            "left and right have different length"
+        );
     }
 }
 
