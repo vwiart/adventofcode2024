@@ -16,7 +16,7 @@ fn read_file(left: &mut Vec<i32>, right: &mut Vec<i32>) -> Result<(), String> {
 
 fn process(left: &mut Vec<i32>, right: &mut Vec<i32>) -> Result<i32, String> {
     if left.len() != right.len() {
-        return Err("left and right have different length".into());
+        return Err("Left and right have different length".into());
     }
     left.sort();
     right.sort();
@@ -41,7 +41,7 @@ mod tests {
         let mut right: Vec<i32> = vec![4, 5];
         assert_eq!(
             super::process(&mut left, &mut right).unwrap_err(),
-            "left and right have different length"
+            "Left and right have different length"
         );
     }
 }
@@ -49,7 +49,7 @@ mod tests {
 fn main() {
     let mut left: Vec<i32> = Vec::new();
     let mut right: Vec<i32> = Vec::new();
-    read_file(&mut left, &mut right).expect("unable to read file");
+    read_file(&mut left, &mut right).expect("Unable to read file");
 
     match process(&mut left, &mut right) {
         Ok(distance) => println!("Total distance is {}", distance),
