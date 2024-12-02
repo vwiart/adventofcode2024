@@ -1,4 +1,4 @@
-use std::fs;
+use std::{collections::HashMap, fs};
 
 const FILENAME: &str = "input.txt";
 
@@ -14,16 +14,32 @@ fn read_file(left: &mut Vec<i32>, right: &mut Vec<i32>) -> Result<(), String> {
     Ok(())
 }
 
-fn process(left: &mut Vec<i32>, right: &mut Vec<i32>) -> Result<i32, String> {
+fn process(left: &Vec<i32>, right: &Vec<i32>) -> Result<i32, String> {
     if left.len() != right.len() {
         return Err("Left and right have different length".into());
     }
-    left.sort();
-    right.sort();
     Ok(left
         .iter()
         .zip(right)
         .fold(0, |acc, (l, r)| acc + (*l - *r).abs()))
+}
+
+fn process2(left: &Vec<i32>, right: &Vec<i32>) -> Result<i32, String> {
+    if left.len() != right.len() {
+        return Err("Left and right have different length".into());
+    }
+    let mut map: HashMap<i32, i32> = HashMap::new();
+
+    for item in right {
+        *map.entry(*item).or_insert(0) += 1;
+    }
+    Ok(left.iter().fold(0, |acc, item| {
+        acc + item
+            * match map.get(item) {
+                Some(v) => *v,
+                None => 0,
+            }
+    }))
 }
 
 #[cfg(test)]
@@ -32,7 +48,18 @@ mod tests {
     fn test_process() {
         let mut left: Vec<i32> = vec![3, 4, 2, 1, 3, 3];
         let mut right: Vec<i32> = vec![4, 3, 5, 3, 9, 3];
-        assert_eq!(super::process(&mut left, &mut right).unwrap(), 11);
+        left.sort();
+        right.sort();
+        assert_eq!(super::process(&left, &right).unwrap(), 11);
+    }
+
+    #[test]
+    fn test_process2() {
+        let mut left: Vec<i32> = vec![3, 4, 2, 1, 3, 3];
+        let mut right: Vec<i32> = vec![4, 3, 5, 3, 9, 3];
+        left.sort();
+        right.sort();
+        assert_eq!(super::process2(&left, &right).unwrap(), 31);
     }
 
     #[test]
@@ -51,7 +78,14 @@ fn main() {
     let mut right: Vec<i32> = Vec::new();
     read_file(&mut left, &mut right).expect("Unable to read file");
 
-    match process(&mut left, &mut right) {
+    left.sort();
+    right.sort();
+    match process(&left, &right) {
+        Ok(distance) => println!("Total distance is {}", distance),
+        Err(e) => println!("Error: {}", e),
+    };
+
+    match process2(&left, &right) {
         Ok(distance) => println!("Total distance is {}", distance),
         Err(e) => println!("Error: {}", e),
     };
